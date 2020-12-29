@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>书签列表</title>
+<style type="text/css">
+    html,body {
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+    }
+    h1,hr {
+        color: #ccc;
+    }
+    a {
+        text-decoration: none;
+        font-size: 24px;
+        font-weight: bold;
+        color: deepskyblue;
+    }
+    table {
+        width: 60%;
+        border: aquamarine solid 1px;
+        border-radius: 6px;
+        text-align: center;
+    }
+    .header {
+        font-size: 24px;
+    }
+    table .content {
+        font-weight: lighter;
+    }
+    td {
+        padding: 0 10px;
+        border: aquamarine solid 1px;
+        border-radius: 3px;
+    }
+    .btn {
+        background-color: deepskyblue;
+        color: bisque;
+        width: 70px;
+        height: 28px;
+        font-size: 14px;
+        line-height: 28px;
+        text-align: center;
+        border-radius: 3px;
+    }
+</style>
+</head>
+<body>
+<h1 align="center">Welcome</h1>
+<hr>
+<table align="center">
+    <tr class="header">
+        <td>名字</td>
+        <td>描述</td>
+        <td>操作</td>
+    </tr>
+    <tr class="content" th:each="fav : ${favList}">
+        <td><a th:href="${fav.url}" th:text="${fav.name}">点击这里</a></td>
+        <td th:text="${fav.description}"></td>
+        <td><button class="btn">删除</button></td>
+    </tr>
+</table>
+</body>
+</html>
