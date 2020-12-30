@@ -5,6 +5,8 @@ import com.it.favorites.exception.AppException;
 import com.it.favorites.exception.AppExceptionAreadyExists;
 import com.it.favorites.exception.AppExceptionBadRequest;
 import com.it.favorites.exception.HttpResult;
+import com.it.favorites.model.file.FileInfo;
+import com.it.favorites.service.file.FileInfoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +19,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequestMapping("/file")
@@ -29,14 +34,34 @@ public class FileController {
 
     @Autowired
     private GlobalProperties properties;
+    @Autowired
+    private FileInfoService fileInfoService;
+
+    @PostMapping("/list")
+    @ResponseBody
+    public List<FileInfo> getFileList() throws Exception {
+        return fileInfoService.getFileList();
+    }
 
     @ResponseBody
     @PostMapping("/{folder}")
     @ApiOperation("文件上传")
     public HttpResult uploadFile(@PathVariable(name = "folder") String folder,
-                                 @RequestParam(value = "file") MultipartFile file) throws Exception {
+                                 @RequestParam(value = "file") MultipartFile file,
+                                 HttpServletRequest request) throws Exception {
         String name = genFilename(file.getOriginalFilename());
         String path = genFilePath(folder, name);
+
+        //保存到数据库
+        FileInfo record = new FileInfo();
+        record.setName(name);
+        String serverName = request.getServerName();
+        int serverPort = request.getServerPort();
+        String url = "http://" + serverName + ":" + serverPort + "/file/" + folder + "/" + name;
+        record.setUrl(url);
+        record.setUploadTime(LocalDateTime.now());
+        fileInfoService.save(record);
+
         try {
             File localFile = new File(path);
             if (localFile.exists()) {
