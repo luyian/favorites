@@ -57,7 +57,7 @@
         <td>操作</td>
     </tr>
     <tr class="content" th:each="fav : ${favList}">
-        <td><a th:href="${fav.url}" th:text="${fav.name}">点击这里</a></td>
+        <td><a th:href="${fav.url}" th:text="${fav.name}" target="_blank">点击这里</a></td>
         <td th:text="${fav.description}"></td>
         <td><button class="btn">删除</button></td>
     </tr>

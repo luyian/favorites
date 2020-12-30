@@ -19,5 +19,5 @@ public interface RecordDao extends JpaRepository<Record, String> {
      * 列表
      * @return
      */
-    List<Record> findAll();
+    List<Record> findAllByIdIsNotNullOrderByTopAsc();
 }

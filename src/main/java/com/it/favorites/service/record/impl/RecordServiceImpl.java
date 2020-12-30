@@ -20,6 +20,6 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public List<Record> findAll() {
-        return recordDao.findAll();
+        return recordDao.findAllByIdIsNotNullOrderByTopAsc();
     }
 }

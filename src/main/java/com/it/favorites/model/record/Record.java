@@ -1,9 +1,11 @@
 package com.it.favorites.model.record;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @Entity
@@ -15,6 +17,8 @@ public class Record {
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
     private String id;
     private String name;
+    @NotBlank
     private String url;
     private String description;
+    private Integer top;
 }
