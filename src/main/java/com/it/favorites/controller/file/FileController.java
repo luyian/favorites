@@ -11,15 +11,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -37,10 +36,33 @@ public class FileController {
     @Autowired
     private FileInfoService fileInfoService;
 
+    @ApiOperation("文件列表异步接口")
     @PostMapping("/list")
     @ResponseBody
     public List<FileInfo> getFileList() throws Exception {
         return fileInfoService.getFileList();
+    }
+
+    @ApiOperation("跳转到文件上传页面")
+    @GetMapping("/to-upload")
+    public String toUpload() {
+        return "upload";
+    }
+
+    @ApiOperation("文件列表展示")
+    @GetMapping("/show-list")
+    public String showFileList(Model model) throws Exception {
+        model.addAttribute("fileList", fileInfoService.getFileList());
+        return "file-list";
+    }
+
+    @ApiOperation("删除文件记录")
+    @PostMapping("/delete-by-id/{id}")
+    public HttpEntity deleteById(@PathVariable("id") String id,
+                             Model model) throws Exception {
+        fileInfoService.deleteById(id);
+        model.addAttribute("fileList", fileInfoService.getFileList());
+        return new HttpEntity(HttpStatus.OK);
     }
 
     @ResponseBody
@@ -52,9 +74,21 @@ public class FileController {
         String name = genFilename(file.getOriginalFilename());
         String path = genFilePath(folder, name);
 
-        //保存到数据库
+        //保存文件
+        try {
+            File localFile = new File(path);
+            if (localFile.exists()) {
+                throw new AppExceptionAreadyExists("文件已经存在");
+            }
+            file.transferTo(localFile);
+        } catch (Exception e) {
+            throw new AppExceptionBadRequest("非法路径");
+        }
+
+        //保存记录到数据库
         FileInfo record = new FileInfo();
-        record.setName(name);
+        record.setName(getRealName(name));
+        record.setLocalFilePath("/" + folder + "/" + name);
         String serverName = request.getServerName();
         int serverPort = request.getServerPort();
         String url = "http://" + serverName + ":" + serverPort + "/file/" + folder + "/" + name;
@@ -62,18 +96,21 @@ public class FileController {
         record.setUploadTime(LocalDateTime.now());
         fileInfoService.save(record);
 
-        try {
-            File localFile = new File(path);
-            if (localFile.exists()) {
-                throw new AppExceptionAreadyExists("文件已经存在");
-            }
-
-            file.transferTo(localFile);
-        } catch (Exception e) {
-            throw new AppExceptionBadRequest("非法路径");
-        }
-
         return new HttpResult(name);
+    }
+
+    /**
+     * 获取真实的文件名
+     * 原文件名：1609377759786_1.jpg
+     *
+     * @param name
+     * @return
+     * @throws Exception
+     */
+    private String getRealName(String name) throws Exception{
+        String[] strs = name.split("_");
+        int index = strs.length - 1;
+        return strs[index];
     }
 
     @ApiOperation("文件下载")
@@ -90,7 +127,7 @@ public class FileController {
 
         HttpHeaders headers = new HttpHeaders();
         String encodeFileName = new String(filename.getBytes("UTF-8"), "iso-8859-1");
-        headers.setContentDispositionFormData("attachment", encodeFileName);
+        headers.setContentDispositionFormData("attachment", getRealName(encodeFileName));
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
         return new ResponseEntity<byte[]>(bytes, headers, HttpStatus.OK);

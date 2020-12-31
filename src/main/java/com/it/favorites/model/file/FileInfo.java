@@ -24,4 +24,5 @@ public class FileInfo {
     private String des;
     private Integer top;
     private String type;
+    private String localFilePath;
 }

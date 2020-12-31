@@ -17,4 +17,10 @@ public interface FileInfoService {
      * @return
      */
     FileInfo save(FileInfo record);
+
+    /**
+     * 根据id删除
+     * @param id
+     */
+    void deleteById(String id);
 }

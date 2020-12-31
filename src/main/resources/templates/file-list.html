@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>下载列表</title>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<style type="text/css">
+    html,body {
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+    }
+    h1,hr {
+        color: #ccc;
+    }
+    a {
+        text-decoration: none;
+        font-size: 24px;
+        font-weight: bold;
+        color: deepskyblue;
+    }
+    .container {
+        width: 60%;
+        height: 100%;
+        margin: 0 auto;
+    }
+    #addBtn {
+        margin: 10px;
+        height: 36px;
+        width: 90px;
+        border-radius: 10px;
+        border: none;
+        background-color: yellowgreen;
+        color: azure;
+        font-size: 18px;
+        line-height: 36px;
+        text-align: center;
+    }
+    #addBtn span {
+        font-weight: bold;
+    }
+    table {
+        width: 100%;
+        border: aquamarine solid 1px;
+        border-radius: 6px;
+        text-align: center;
+    }
+    .header {
+        font-size: 24px;
+    }
+    table .content {
+        font-weight: lighter;
+    }
+    td {
+        padding: 0 10px;
+        border: aquamarine solid 1px;
+        border-radius: 3px;
+    }
+    .btn {
+        border: none;
+        background-color: deepskyblue;
+        color: bisque;
+        width: 70px;
+        height: 28px;
+        font-size: 14px;
+        line-height: 28px;
+        text-align: center;
+        border-radius: 3px;
+    }
+</style>
+</head>
+<body>
+<h1 align="center">下载列表</h1>
+<hr>
+<div class="container">
+    <button id="addBtn"><span>+ </span>新增</button>
+    <table>
+        <tr class="header">
+            <td>名字</td>
+            <td>描述</td>
+            <td>操作</td>
+        </tr>
+        <tr class="content" th:each="file : ${fileList}">
+            <td th:text="${file.id}" hidden></td>
+            <td><a th:href="${file.url}" th:text="${file.name}">点击这里</a></td>
+            <td th:text="${file.des}"></td>
+            <td><button class="btn" id="delete" th:name="${file.id}">删除</button></td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var id = $("#delete").attr("name");
+        $("#delete").click(function () {
+            $.ajax({
+                url: "delete-by-id/" + id,
+                type: "post",
+                data: {},
+                success: function (re) {
+                    window.location.href = "show-list";
+                }
+            })
+        });
+
+        $("#addBtn").click(function () {
+           window.location.href = "to-upload";
+        });
+    });
+</script>
+</body>
+</html>
