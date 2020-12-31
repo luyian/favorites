@@ -70,9 +70,14 @@ public class FileController {
     @ApiOperation("文件上传")
     public HttpResult uploadFile(@PathVariable(name = "folder") String folder,
                                  @RequestParam(value = "file") MultipartFile file,
+                                 String des,
                                  HttpServletRequest request) throws Exception {
         String name = genFilename(file.getOriginalFilename());
         String path = genFilePath(folder, name);
+
+        if (file.isEmpty()) {
+            throw new AppExceptionBadRequest("选择文件再提交");
+        }
 
         //保存文件
         try {
@@ -87,6 +92,7 @@ public class FileController {
 
         //保存记录到数据库
         FileInfo record = new FileInfo();
+        record.setDes(des);
         record.setName(getRealName(name));
         record.setLocalFilePath("/" + folder + "/" + name);
         String serverName = request.getServerName();

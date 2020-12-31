@@ -20,7 +20,7 @@ public class ValidParamAdvice {
     /**
      * 定义切点，切点为com.it.controller包和子包里任意方法的执行
      */
-    @Pointcut("execution(* com.it.favorites.controller.*..*(..))")
+    @Pointcut("execution(* com.it.favorites.controller..*(..))")
     public void controllerPointCut() {
     }
 
