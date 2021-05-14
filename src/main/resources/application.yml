@@ -30,10 +30,14 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
+
   # thymeleaf配置
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
+  web:
+    resources:
+      static-locations: classpath:/templates/
 
 # 全局配置
 my-global:

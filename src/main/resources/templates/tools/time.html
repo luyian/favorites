@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>time-tools</title>
+    <script src="../jquery/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/my-style.css">
+    <style type="text/css">
+        .btn:hover {
+            background-color: #6b696999;
+        }
+        .container {
+            width: 800px;
+            height: 100%;
+            margin: 50px auto 0;
+        }
+        .tool {
+            border-top: #888 dashed 1px;
+            padding-top: 20px;
+            margin-bottom: 60px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="tool">
+        <span class="title">获取当前时间戳</span>
+        <form>
+            <input class="input" type="text" id="currentTime" name="currentTime">
+            <input type="button" class="btn" value="获取" id="getCurrentTime">
+        </form>
+    </div>
+    <div class="tool">
+        <span class="title">时间戳转时间</span>
+        <form>
+            <input class="input" type="text" id="timestamp" name="timestamp">
+            <input type="button" class="btn" value="转换" id="getDataTime">
+            <input class="input" type="text" id="timestamp-to-date">
+        </form>
+    </div>
+    <div class="tool">
+        <span class="title">时间转时间戳</span>
+        <form>
+            <input class="input" type="text" id="dateTime" name="dateTime">
+            <input type="button" class="btn" value="转换" id="getTimeStamp">
+            <input class="input" type="text" id="date-to-timestamp">
+        </form>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        //获取当前时间戳
+        $("#getCurrentTime").click(function () {
+            let time = new Date().getTime();
+            $("#currentTime").val(time);
+        });
+
+
+        //时间戳转换
+        $("#getDataTime").click(function () {
+            const input = $("#timestamp").val();
+            const output = $("#timestamp-to-date");
+            $.ajax(
+            {
+                type: "get",
+                url: "/timestamp/to-date?timestamp=" + input,
+                contentType: "application/json;charset=UTF-8",
+                success: function (res) {
+                    output.val(res.data);
+                },
+                error : function(e){
+                    console.log(e.status);
+                    console.log(e.responseText);
+                }
+            });
+        });
+        $("#getTimeStamp").click(function () {
+            const input = $("#dateTime").val();
+            const output = $("#date-to-timestamp");
+            $.ajax(
+                {
+                    type: "get",
+                    url: "/timestamp/to-timestamp?datetime=" + input,
+                    contentType: "application/json;charset=UTF-8",
+                    success: function (res) {
+                        output.val(res.data);
+                    },
+                    error : function(e){
+                        console.log(e.status);
+                        console.log(e.responseText);
+                    }
+                });
+        });
+    });
+</script>
+
+</body></html>
