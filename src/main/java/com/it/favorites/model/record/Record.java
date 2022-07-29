@@ -3,9 +3,11 @@ package com.it.favorites.model.record;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 
 @Data
 @Entity
@@ -21,4 +23,9 @@ public class Record {
     private String url;
     private String description;
     private Integer top;
+
+    @UpdateTimestamp
+    @Column(name = "update_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateTime;
 }

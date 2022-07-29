@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/springboot?useunicode=true&characterEncoding=utf8
+    url: jdbc:mysql://yinianliu.cn:3306/springboot?useunicode=true&characterEncoding=utf8&serverTimezone=GMT
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
@@ -10,4 +10,4 @@ spring:
 
 # 全局配置
 my-global:
-  file-path: /usr/local/myapp/upload
+  file-path: /usr/local/fav-upload

@@ -4,12 +4,12 @@ server:
     uri-encoding: UTF-8
     max-threads: 1000
     min-spare-threads: 30
-  port: 8090
+  port: 80
 
 spring:
   # 环境 dev|test|prod
   profiles:
-    active: dev
+    active: h2
   application:
     name: favorites
   http:
@@ -18,7 +18,7 @@ spring:
       max-request-size: 100MB
       enabled: true
   datasource:
-    url: jdbc:mysql://localhost:3306/springboot?useunicode=true&characterEncoding=utf8
+    url: jdbc:mysql://localhost:3306/springboot?useunicode=true&characterEncoding=utf8&serverTimezone=GMT
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
@@ -39,6 +39,9 @@ spring:
     resources:
       static-locations: classpath:/templates/
 
+  jackson:
+    time-zone: GMT+8
 # 全局配置
 my-global:
   file-path: D:/upload
+
